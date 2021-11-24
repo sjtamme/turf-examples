@@ -1,6 +1,6 @@
-# turf-examples
+# Turf Examples
 
-# Shortest Path 
+## Shortest Path 
 
 This example shows how turf can find the shortest path between two points that have an obstacle between them.
 
