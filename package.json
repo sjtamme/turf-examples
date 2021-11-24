@@ -1,0 +1,22 @@
+{
+  "name": "turf-examples",
+  "version": "1.0.0",
+  "description": "using turf's shortest path",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sjtamme/turf-examples.git"
+  },
+  "author": "Sarah Jane Tamme",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sjtamme/turf-examples/issues"
+  },
+  "homepage": "https://github.com/sjtamme/turf-examples#readme",
+  "dependencies": {
+    "@turf/turf": "^6.5.0"
+  }
+}

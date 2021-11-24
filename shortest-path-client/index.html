@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+
+    <title>Shortest Path with Turf</title>
+    <link href="https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js"></script>
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+
+    <script>
+        var map = L.map("map").setView([41.31775, -73.31193], 13);
+
+        // mapbox access token
+        var accessToken = "pk.eyJ1Ijoic2p0YW1tZSIsImEiOiJja2k5NHozZDEwY2JrMnZueDYyemF6MW5lIn0.h76rcKDSZ9pmmvrCFSWXyQ";
+
+        // add mapbox tile layers using access token
+        L.tileLayer(
+            'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2p0YW1tZSIsImEiOiJja2k5NHozZDEwY2JrMnZueDYyemF6MW5lIn0.h76rcKDSZ9pmmvrCFSWXyQ', {
+                attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
+                tileSize: 512,
+                maxZoom: 18,
+                zoomOffset: -1,
+                id: 'mapbox/light-v10',
+                accessToken: 'pk.eyJ1Ijoic2p0YW1tZSIsImEiOiJja2k5NHozZDEwY2JrMnZueDYyemF6MW5lIn0.h76rcKDSZ9pmmvrCFSWXyQ'
+            }).addTo(map);
+
+        // create start and end points
+        var start = [41.32775, -73.31293];
+        L.marker(start).addTo(map);
+
+        var end = [41.29005, -73.31293]
+        L.marker(end).addTo(map); 
+
+        // input latlngs for polygon obstacle
+        var latlngs = [
+            [
+                [41.33282, -73.335621],
+                [41.3331, -73.328425],
+                [41.320203, -73.327677],
+                [41.319689, -73.30165],
+                [41.302307, -73.300809],
+                [41.301045, -73.338611],
+                [41.334081, -73.341088],
+                [41.33282, -73.335621]
+            ]
+        ];
+
+        //add polygon to map and color
+        var polygon = L.polygon(latlngs, {
+            color: 'orange'
+        }).addTo(map);
+
+        var options = {
+            obstacles: turf.polygon(latlngs)
+        };
+
+        // use turf shortest path to create the shortest path between the 2 points around the obstacle
+        var path = turf.shortestPath(start, end, options);
+
+        // create line for path
+        var line = L.polyline(path['geometry']['coordinates'], {
+            color: 'blue'
+        }).addTo(map);
+    </script>
+</body>
+
+</html>
