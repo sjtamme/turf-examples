@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+
+    <title>Using Buffer with Turf</title>
+    <link href="https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
+    <script src="https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js"></script>
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+
+    <script>
+        var map = L.map("map", {
+            zoomSnap: 0.1,
+            center: [40.33077, -99.5182],
+            zoom: 4.2
+        });
+
+        // mapbox access token
+        var accessToken = "pk.eyJ1Ijoic2p0YW1tZSIsImEiOiJja2k5NHozZDEwY2JrMnZueDYyemF6MW5lIn0.h76rcKDSZ9pmmvrCFSWXyQ";
+
+        // create a geocoder control object with options
+        var geoCoderControl = L.mapbox.geocoderControl("mapbox.places", {
+            accessToken: accessToken,
+            keepOpen: true,
+            autocomplete: true,
+            position: "topright",
+        });
+
+        // add the geocoder to the map
+        map.addControl(geoCoderControl);
+
+        // add mapbox tile layers using access token
+        L.tileLayer(
+            'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2p0YW1tZSIsImEiOiJja2k5NHozZDEwY2JrMnZueDYyemF6MW5lIn0.h76rcKDSZ9pmmvrCFSWXyQ', {
+                attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
+                tileSize: 512,
+                maxZoom: 18,
+                zoomOffset: -1,
+                id: 'mapbox/light-v10',
+                accessToken: 'pk.eyJ1Ijoic2p0YW1tZSIsImEiOiJja2k5NHozZDEwY2JrMnZueDYyemF6MW5lIn0.h76rcKDSZ9pmmvrCFSWXyQ'
+            }).addTo(map);
+
+        // access the airports file
+        $.getJSON('airports.json', function (data) {
+            //create a layerGroup with airport locations
+            var airports = data;
+
+            // add airport points to map
+            air = L.geoJSON(airports).addTo(map);
+
+        geoCoderControl.on("select", function (result) {
+                // add a marker on the map
+                var targetPoint = result.feature;
+                var searchResult = L.geoJson(targetPoint).addTo(map);
+
+                // add and open tooltip
+                searchResult.bindTooltip(result.feature.place_name).openTooltip();
+
+                // loop through the airport layers 
+                air.eachLayer(function (point) {
+
+                    // create buffer
+                var buffered = turf.buffer(searchResult.toGeoJSON(), 10, {units: 'miles'});
+                
+                // adding buffer to map
+                L.geoJson(buffered).addTo(map);
+                });
+        }); 
+    });
+        
+
+    </script>
+</body>
+
+</html>

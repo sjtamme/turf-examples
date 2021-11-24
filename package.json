@@ -1,7 +1,7 @@
 {
   "name": "turf-examples",
   "version": "1.0.0",
-  "description": "using turf's shortest path",
+  "description": "client and server side examples using turf",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
